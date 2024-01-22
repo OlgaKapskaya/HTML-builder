@@ -20,10 +20,12 @@ function readFile(filePath) {
 
 function writeFile(filePath, data) {
   return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, data, 'utf8', (err) => {
-      err && reject(err);
-      resolve();
+    const stream = fs.createWriteStream(filePath);
+    stream.on('error', (error) => {
+      reject(error);
     });
+    stream.write(data + '\n');
+    resolve();
   });
 }
 
