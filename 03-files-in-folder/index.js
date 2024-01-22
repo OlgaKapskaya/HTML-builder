@@ -16,9 +16,9 @@ fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
 });
 
 async function getFileData(file) {
-  const fileName = file.name;
+  const fileName = path.parse(file.name).name;
   const fileType = path.extname(file.name).slice(1);
-  const fileSize = await getFileSize(path.join(folderPath, fileName));
+  const fileSize = await getFileSize(path.join(folderPath, file.name));
 
   return { fileName, fileType, fileSize };
 }
