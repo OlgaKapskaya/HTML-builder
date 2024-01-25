@@ -1,8 +1,25 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const fsp = fs.promises;
 
 const folder = path.join(__dirname, 'files');
 const newFolder = path.join(__dirname, 'files-copy');
+
+function start() {
+  fs.access(newFolder, fs.constants.F_OK, async (err) => {
+    if (!err) {
+      await fsp.rm(newFolder, { recursive: true });
+    }
+    await fsp.mkdir(newFolder);
+    copyDirectory(folder, newFolder)
+      .then(() => {
+        console.log(`Success! All files are copied into ${newFolder}`);
+      })
+      .catch((err) => {
+        console.error('Error copying directory:', err);
+      });
+  });
+}
 
 function copyDirectory(oldFolder, newFolder) {
   return new Promise((resolve, reject) => {
@@ -48,10 +65,4 @@ function getNewDirectory(file, oldFolder, newFolder) {
   }
 }
 
-copyDirectory(folder, newFolder)
-  .then(() => {
-    console.log(`Success! All files are copied into ${newFolder}`);
-  })
-  .catch((err) => {
-    console.error('Error copying directory:', err);
-  });
+start();
